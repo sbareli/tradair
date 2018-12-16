@@ -5,20 +5,21 @@ import lombok.Getter;
 @Getter
 public class OrderKey {
 
-    public OrderKey(String symbol, String venue, Double price) {
+    public OrderKey(String symbol, Double price, String venue) {
         this.symbol = symbol;
-        this.venue = venue;
         this.price = price;
+        this.venue = venue;
     }
 
     @Override
     public String toString() {
-        return symbol + " | " + venue + " | " + Double.toString(price);
+        return symbol + " | " + Double.toString(price) + " | " + venue;
     }
 
-    protected OrderKey() {}
+    private OrderKey() {}
 
     private String symbol;
-    private String venue;
     private double price;
+    private String venue;
+
 }

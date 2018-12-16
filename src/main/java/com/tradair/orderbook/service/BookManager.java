@@ -4,19 +4,57 @@ package com.tradair.orderbook.service;
 import com.tradair.orderbook.common.Order;
 import com.tradair.orderbook.common.OrderKey;
 
+import java.util.Collection;
 import java.util.Comparator;
 
 public class BookManager {
 
+    public BookManager(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public String
+    whoAmI() {
+        return symbol;
+    }
+
     public boolean
-    accept(Order order)
+    newOrder(Order order)
     {
+        //TODO: assert this symbol belongs to this book
+
         boolean status = false;
 
         if (order.isLimit() && order.isBid())
             status = bidOrderBook.addOrder(order);
         else if (order.isLimit() && order.isOffer())
             status = askOrderBook.addOrder(order);
+
+        return status;
+    }
+
+    public boolean
+    deleteOrder(Order order)
+    {
+        boolean status = false;
+
+        if (order.isBid())
+            status = bidOrderBook.deleteOrder(order);
+        else if (order.isOffer())
+            status = askOrderBook.deleteOrder(order);
+
+        return status;
+    }
+
+    public boolean
+    updateOrder(Order order)
+    {
+        boolean status = false;
+
+        if (order.isBid())
+            status = bidOrderBook.updateOrder(order);
+        else if (order.isOffer())
+            status = askOrderBook.updateOrder(order);
 
         return status;
     }
@@ -29,6 +67,16 @@ public class BookManager {
     public double
     getBestOffer() {
         return askOrderBook.getBestPrice();
+    }
+
+    public Collection<Order>
+    getBidValues() {
+        return bidOrderBook.getValues();
+    }
+
+    public Collection<Order>
+    getOfferValues() {
+        return askOrderBook.getValues();
     }
 
     // high to low
@@ -45,4 +93,6 @@ public class BookManager {
                     .thenComparing(OrderKey::getVenue)
     );
 
+    private BookManager() {}
+    private String symbol;
 }

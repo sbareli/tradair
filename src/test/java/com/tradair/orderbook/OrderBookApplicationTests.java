@@ -1,29 +1,39 @@
 package com.tradair.orderbook;
 
 import com.tradair.orderbook.common.Order;
+import com.tradair.orderbook.service.AssetManager;
 import com.tradair.orderbook.service.BookManager;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.concurrent.ConcurrentNavigableMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class OrderBookApplicationTests {
+
+	Logger logger = LoggerFactory.getLogger(OrderBookApplicationTests.class);
 
 	@Test
 	public void contextLoads() {
 	}
 
 	@Test
-	public void addTrades() {
-		boolean OK = false;
+	public void addTrades()
+	{
+		boolean OK;
 
-		BookManager bookManager = new BookManager();
+		AssetManager assetManager = new AssetManager();
+
+		BookManager bookManager = assetManager.getBookManager("IBM");
+
 
 		Order bid1 = new Order("ABC", 1, 12345, Order.OrderSide.Bid, "IBM", 100, Order.OrderType.Limit, 129.25);
-
 		Order bid2 = new Order("ABC", 2, 12345, Order.OrderSide.Bid, "IBM", 100, Order.OrderType.Limit, 130.25);
 		Order bid3 = new Order("ABC", 3, 12345, Order.OrderSide.Bid, "IBM", 100, Order.OrderType.Limit, 127.25);
 		Order bid4 = new Order("ABC", 4, 12345, Order.OrderSide.Bid, "IBM", 100, Order.OrderType.Limit, 131.25);
@@ -35,25 +45,35 @@ public class OrderBookApplicationTests {
 		Order ask4 = new Order("XYZ", 9, 12345, Order.OrderSide.Offer, "IBM", 100, Order.OrderType.Limit, 127.25);
 		Order ask5 = new Order("XYZ", 10, 12345, Order.OrderSide.Offer, "IBM", 100, Order.OrderType.Limit, 126.25);
 
-		OK = bookManager.accept(bid1) &&
-				bookManager.accept(bid2) &&
-				bookManager.accept(bid3) &&
-				bookManager.accept(bid4) &&
-				bookManager.accept(bid5);
+		OK = bookManager.newOrder(bid1) &&
+				bookManager.newOrder(bid2) &&
+				bookManager.newOrder(bid3) &&
+				bookManager.newOrder(bid4) &&
+				bookManager.newOrder(bid5);
 
 		Assert.assertTrue(OK);
 
-		OK = bookManager.accept(ask1) &&
-			bookManager.accept(ask2) &&
-			bookManager.accept(ask3) &&
-			bookManager.accept(ask4) &&
-			bookManager.accept(ask5);
+		OK = bookManager.newOrder(ask1) &&
+			bookManager.newOrder(ask2) &&
+			bookManager.newOrder(ask3) &&
+			bookManager.newOrder(ask4) &&
+			bookManager.newOrder(ask5);
 
 		Assert.assertTrue(OK);
 
 
 		Assert.assertEquals(bookManager.getBestBid(), 131.25, 0);
 		Assert.assertEquals(bookManager.getBestOffer(), 126.25, 0);
+
+		logger.info("Print bids");
+		bookManager.getBidValues().forEach(
+				order -> logger.info(order.toString())
+		);
+
+		logger.info("Print offers");
+		bookManager.getOfferValues().forEach(
+				order -> logger.info(order.toString())
+		);
 
 	}
 

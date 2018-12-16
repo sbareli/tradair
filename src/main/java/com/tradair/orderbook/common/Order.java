@@ -39,6 +39,11 @@ public class Order {
         return side == OrderSide.Offer ? true : false ;
     }
 
+    @Override
+    public String toString() {
+        return symbol + "," + Double.toString(price) + "," + venue + "," + Integer.toString(quantity);
+    }
+
     private String symbol;
     private String venue;
     private double price;
