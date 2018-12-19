@@ -6,6 +6,7 @@ import com.tradair.orderbook.common.OrderKey;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 
 public class BookManager {
 
@@ -68,6 +69,23 @@ public class BookManager {
     getBestOffer() {
         return askOrderBook.getBestPrice();
     }
+
+    public List<Order>
+    getBidsDepth(double price, String venue)
+    {
+        OrderKey fromKey = new OrderKey(whoAmI(), price, venue);
+
+        return bidOrderBook.getDepth(fromKey);
+    }
+
+    public List<Order>
+    getOfferDepth(double price, String venue)
+    {
+        OrderKey fromKey = new OrderKey(whoAmI(), price, venue);
+
+        return askOrderBook.getDepth(fromKey);
+    }
+
 
     public Collection<Order>
     getBidValues() {

@@ -1,6 +1,7 @@
 package com.tradair.orderbook;
 
 import com.tradair.orderbook.common.Order;
+import com.tradair.orderbook.common.OrderKey;
 import com.tradair.orderbook.service.AssetManager;
 import com.tradair.orderbook.service.BookManager;
 import org.junit.Assert;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 @RunWith(SpringRunner.class)
@@ -74,6 +76,14 @@ public class OrderBookApplicationTests {
 		bookManager.getOfferValues().forEach(
 				order -> logger.info(order.toString())
 		);
+
+		List<Order> depth = bookManager.getBidsDepth(130, "ABC");
+		logger.info("Best bids better then:" + Double.toString(130));
+		depth.forEach(o->logger.info(o.toString()));
+
+		depth = bookManager.getOfferDepth(130, "ABC");
+		logger.info("Best asks better then:" + Double.toString(130));
+		depth.forEach(o->logger.info(o.toString()));
 
 	}
 

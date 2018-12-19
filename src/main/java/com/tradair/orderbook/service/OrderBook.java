@@ -3,8 +3,7 @@ package com.tradair.orderbook.service;
 import com.tradair.orderbook.common.Order;
 import com.tradair.orderbook.common.OrderKey;
 
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /*
@@ -60,6 +59,18 @@ public class OrderBook {
     getBestPrice() {
         OrderKey key = rows.firstKey();
         return key.getPrice();
+    }
+
+    public List<Order>
+    getDepth(OrderKey fromKey)
+    {
+        SortedMap<OrderKey, Order> map = rows.headMap(fromKey);
+
+        ArrayList<Order> list = new ArrayList<>(map.size());
+
+        map.forEach((k, v)-> list.add(v));
+
+        return list;
     }
 
     public Collection<Order>
