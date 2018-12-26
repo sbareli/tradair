@@ -4,6 +4,8 @@ import com.tradair.orderbook.common.Order;
 import com.tradair.orderbook.common.OrderKey;
 import com.tradair.orderbook.service.AssetManager;
 import com.tradair.orderbook.service.BookManager;
+import com.tradair.orderbook.service.Checker;
+import com.tradair.orderbook.service.Referent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ConcurrentNavigableMap;
 
@@ -85,6 +89,25 @@ public class OrderBookApplicationTests {
 		logger.info("Best asks better then:" + Double.toString(130));
 		depth.forEach(o->logger.info(o.toString()));
 
+	}
+
+	@Test
+	public void checkReefence() throws Exception
+	{
+		Order order = new Order("ABC", 1, 12345, Order.OrderSide.Bid, "IBM", 100, Order.OrderType.Limit, 129.25);
+
+		ReferenceQueue queue = new ReferenceQueue();
+
+		Checker<Order> checker = new Checker<>(queue);
+
+		Referent<Order> wf = new Referent<>(order, new ReferenceQueue<>());
+
+		Thread test = new Thread(checker);
+		test.start();
+
+		wf.clear();
+
+		test.join(5000);
 	}
 
 }
