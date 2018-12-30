@@ -8,6 +8,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.lang.ref.ReferenceQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SpringBootApplication
 public class OrderBookApplication {
@@ -40,12 +42,12 @@ public class OrderBookApplication {
 		order = wf.get();
 		order = null;
 
-		test.join(10000);
-
 		System.out.println("Running GC");
 		Runtime.getRuntime().gc();
 
 		test.join(10000);
+
+		checker.stop();
 	}
 
 }

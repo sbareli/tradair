@@ -12,12 +12,12 @@ public class Checker<T> implements Runnable
 
         System.out.println("Starting Checker<T>");
 
-        while (true)
+        while (On)
         {
             try {
                 System.out.println("Waiting for queue...");
 
-                Reference<? extends T> wf = queue.remove(1000);
+                Reference<? extends T> wf = queue.poll();
 
                 if (wf != null)
                 {
@@ -28,6 +28,20 @@ public class Checker<T> implements Runnable
                     else
                         System.out.println("Dequeued successfully with valid referent");
                 }
+
+                synchronized (this) {
+                    System.out.println("Starting wait 5 sec...");
+                    wait(5000);
+
+                    if (On == false) {
+                        System.out.println("Exit Thread");
+                        break;
+                    }
+                    else {
+                        System.out.println("Done waiting");
+                    }
+                }
+
             }
             catch (InterruptedException e) {
 
@@ -35,9 +49,16 @@ public class Checker<T> implements Runnable
         }
     }
 
+    synchronized public void stop() {
+        On = false;
+        notify();
+    }
+
     public Checker(ReferenceQueue queue) {
         this.queue = queue;
+        On = true;
     }
 
     private ReferenceQueue<T> queue;
+    private boolean On;
 }
